@@ -1,11 +1,8 @@
-package com.api_store_management.api_store_management.util.validate;
+package com.api_store_management.api_store_management.util.validate.product.fields;
 
 import com.api_store_management.api_store_management.dto.ProductDto;
 import com.api_store_management.api_store_management.dto.exception.FieldErrorResponse;
 import com.api_store_management.api_store_management.exception.InsertProductException;
-import com.api_store_management.api_store_management.util.validate.fields.NameValidateProduct;
-import com.api_store_management.api_store_management.util.validate.fields.PriceValidate;
-import com.api_store_management.api_store_management.util.validate.fields.ValidateTypeProduct;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

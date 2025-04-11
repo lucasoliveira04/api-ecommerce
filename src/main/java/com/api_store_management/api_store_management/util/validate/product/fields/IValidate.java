@@ -1,4 +1,4 @@
-package com.api_store_management.api_store_management.util.validate.fields;
+package com.api_store_management.api_store_management.util.validate.product.fields;
 
 import com.api_store_management.api_store_management.dto.exception.FieldErrorResponse;
 
