@@ -2,8 +2,10 @@ package com.api_store_management.api_store_management.controller;
 
 import com.api_store_management.api_store_management.dto.UserDto;
 import com.api_store_management.api_store_management.modal.entity.User;
-import com.api_store_management.api_store_management.modal.repository.UserRepository;
-import com.api_store_management.api_store_management.service.UserService;
+import com.api_store_management.api_store_management.service.user.AddUser;
+import com.api_store_management.api_store_management.service.user.DeleteUser;
+import com.api_store_management.api_store_management.service.user.ListAllUsers;
+import com.api_store_management.api_store_management.service.user.UpdateUser;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,54 +15,50 @@ import java.util.List;
 @RequestMapping("/api/user")
 public class UserController {
 
-    private final UserService userService;
-    private final UserRepository userRepository;
+    private final ListAllUsers listAllUsers;
+    private final AddUser addUser;
+    private final UpdateUser updateUser;
+    private final DeleteUser deleteUser;
 
-    public UserController(UserService userService, UserRepository userRepository) {
-        this.userService = userService;
-        this.userRepository = userRepository;
+    public UserController(ListAllUsers listAllUsers, AddUser addUser, UpdateUser updateUser, DeleteUser deleteUser) {
+        this.listAllUsers = listAllUsers;
+        this.addUser = addUser;
+        this.updateUser = updateUser;
+        this.deleteUser = deleteUser;
     }
 
-    @PostMapping("/")
-    public ResponseEntity<User> createUser(@RequestBody UserDto userDto){
-        User userRequest = userService.addUser(userDto);
+    @GetMapping
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> users = listAllUsers.allUsers();
 
-        if (userRequest != null){
-            return ResponseEntity.ok(userRequest);
-        }
+        if (users == null) return ResponseEntity.badRequest().build();
+        if (users.isEmpty()) return ResponseEntity.noContent().build();
 
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(users);
     }
 
-    @GetMapping("/")
-    public ResponseEntity<List<User>> getAllUsers(){
-        List<User> listUsers = userService.getAllUser();
+    @PostMapping
+    public ResponseEntity<User> addUser(@RequestBody UserDto user) {
+        User request = addUser.addUser(user);
 
-        if (listUsers != null && !listUsers.isEmpty()){
-            return ResponseEntity.ok(listUsers);
-        }
-
-        return ResponseEntity.notFound().build();
+        if (request == null) return ResponseEntity.badRequest().build();
+        return ResponseEntity.ok(request);
     }
 
-    @PutMapping("/")
-    public ResponseEntity<User> updateUser(@PathVariable Integer id, @RequestBody UserDto userDto){
-        User updatedUser = userService.updateUser(id, userDto);
+    @PutMapping("/{userId}")
+    public ResponseEntity<User> updateUser(@PathVariable Integer userId, @RequestBody UserDto user) {
+        User request = updateUser.updateUser(userId, user);
 
-        if (updatedUser != null){
-            return ResponseEntity.ok(updatedUser);
-        }
+        if (request == null) return ResponseEntity.notFound().build();
 
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(request);
     }
 
-    @DeleteMapping("/")
-    public ResponseEntity<Void> deleteAllUsers(){
-        if (userRepository.findAll().isEmpty()){
-            return ResponseEntity.notFound().build();
-        }
-
-        userService.deleteAllUsers();
-        return ResponseEntity.ok().build();
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<User> deleteUser(@PathVariable Integer userId) {
+        User request = deleteUser.deleteUser(userId);
+        if (request == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(request);
     }
+
 }
